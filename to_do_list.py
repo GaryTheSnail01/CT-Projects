@@ -7,7 +7,7 @@ import sys
 #Error handling using try, except, else, and finally
 
 tasks = {}
-error_message = "That is not a valid option, please try again."
+error_message = "An error occured, please try again."
 return_menu = "Returning to the main menu..."
 
 def start():
@@ -29,7 +29,8 @@ def start():
         else:
             print(error_message)
             start()
-    except ValueError:
+            
+    except (ValueError, TypeError) as e:
         print(error_message)
         start()
 
@@ -39,7 +40,7 @@ def add_task(tasks):
         task_qty = input("How many tasks would you like to add? ")
         
         #Returning to the main menu is not working for now.
-        if task_qty.lower == 'back':
+        if task_qty.lower() == 'back':
             print(return_menu)
             start()
             
@@ -55,6 +56,7 @@ def add_task(tasks):
                     "task_time": input("Time: ")
                 }
                 task_qty -= 1
+            print("Task(s) added!")
             print(return_menu)
             start()
                 
@@ -68,10 +70,52 @@ def add_task(tasks):
         
 
 def view_task(tasks):
-    pass
+    print("Viewing saved tasks \nEnter 'Back' to return to the main menu")
+    for task, info in tasks.items():
+        desc = info["task_description"]
+        date = info["task_date"]
+        time = info["task_time"]
+        print(task)
+        print(f"\t {desc} \n\t {date} \n\t {time}")
+        
+    try:
+        answer = input("")
+        
+        if answer.lower() == "back":
+            print(return_menu)
+            start()
+        else:
+            print("Invalid input.")
+            view_task(tasks)
+            
+    except (ValueError, TypeError) as e:
+        print(error_message)
+        view_task(tasks)
+        
 
 def del_task(tasks):
-    pass
+    print("Viewing saved tasks \nEnter 'Back' to return to the main menu")
+    for task, info in tasks.items():
+        desc = info["task_description"]
+        date = info["task_date"]
+        time = info["task_time"]
+        print(task)
+        print(f"\t {desc} \n\t {date} \n\t {time}")
+        
+    try:
+        answer = input("Please enter what task you'd like to delete: ")
+        
+        if tasks.count(answer) > 1:
+            pass
+        elif answer in tasks:
+            tasks.pop(answer)
+        else:
+            print("That is not a valid task to delete. Please try again.")
+            del_task(tasks)
+    except (TypeError, ValueError) as e:
+        print(error_message)
+        del_task(tasks)
+            
 
 def quit_program(tasks):
     print("Exiting program...")
